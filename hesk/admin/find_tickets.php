@@ -25,6 +25,7 @@ hesk_dbConnect();
 hesk_isLoggedIn();
 
 define('CALENDAR',1);
+define('AUTO_RELOAD',1);
 $_SESSION['hide']['ticket_list'] = true;
 
 /* Check permissions for this feature */
@@ -43,18 +44,16 @@ require_once(HESK_PATH . 'inc/header.inc.php');
 
 /* Print admin navigation */
 require_once(HESK_PATH . 'inc/show_admin_nav.inc.php');
-
 ?>
+<div class="main__content tickets">
+    <div style="margin-left: -16px; margin-right: -24px;">
+        <?php
 
-</td>
-</tr>
-<tr>
-<td>
-
-<h3 align="center"><?php echo $hesklang['tickets_found']; ?></h3>
-
+        /* This will handle error, success and notice messages */
+        hesk_handle_messages();
+        ?>
+    </div>
 <?php
-
 // This SQL code will be used to retrieve results
 $sql_final = "SELECT
 `id`,
@@ -77,6 +76,7 @@ LEFT(`message`, 400) AS `message`,
 `staffreplies`,
 `owner`,
 `time_worked`,
+`due_date`,
 `lastreplier`,
 `replierid`,
 `archive`,
@@ -91,10 +91,14 @@ foreach ($hesk_settings['custom_fields'] as $k=>$v)
 	}
 }
 
-$sql_final.= " FROM `".hesk_dbEscape($hesk_settings['db_pfix'])."tickets` WHERE ";
+$sql_final.= " FROM `".hesk_dbEscape($hesk_settings['db_pfix'])."tickets` WHERE ".hesk_myCategories()." AND ".hesk_myOwnership();
 
-// This code will be used to count number of results
-$sql_count = "SELECT COUNT(*) FROM `".hesk_dbEscape($hesk_settings['db_pfix'])."tickets` WHERE ";
+// This code will be used to count number of results for this specific search
+$sql_count = " SELECT COUNT(*) AS `cnt`, `status`,
+                      IF (`owner` = " . intval($_SESSION['id']) . ", 1, IF (`owner` = 0, 0, IF (`assignedby` = " . intval($_SESSION['id']) . ", 3, 2) ) ) AS `assigned_to`,
+                      IF (`due_date` < NOW(), 2, IF (`due_date` BETWEEN NOW() AND (NOW() + INTERVAL ".intval($hesk_settings['due_soon'])." DAY), 1, 0) ) AS `due`
+                FROM `".hesk_dbEscape($hesk_settings['db_pfix'])."tickets`
+                WHERE ".hesk_myCategories()." AND ".hesk_myOwnership();
 
 // This is common SQL for both queries
 $sql = "";
@@ -105,18 +109,16 @@ $s_my = array(1=>1,2=>1);
 $s_ot = array(1=>1,2=>1);
 $s_un = array(1=>1,2=>1);
 
+// Is this a quick link?
+$is_quick_link = hesk_GET('ql', false);
+
 // --> TICKET CATEGORY
 $category = intval( hesk_GET('category', 0) );
 
 // Make sure user has access to this category
 if ($category && hesk_okCategory($category, 0) )
 {
-	$sql .= " `category`='{$category}' ";
-}
-// No category selected, show only allowed categories
-else
-{
-	$sql .= hesk_myCategories();
+    $sql .= " AND `category`='{$category}' ";
 }
 
 // Show only tagged tickets?
@@ -125,6 +127,8 @@ if ( ! empty($_GET['archive']) )
 	$archive[2]=1;
 	$sql .= " AND `archive`='1' ";
 }
+
+$sql_count .= $sql;
 
 // Ticket owner preferences
 $fid = 2;
@@ -155,7 +159,8 @@ if ($what == 'seqid' && ! $hesk_settings['sequential'])
 // Setup SQL based on searching preferences
 if ( ! $no_query)
 {
-	$sql .= " AND ";
+    $sql_previous = $sql;
+    $sql = " AND ";
 
 	switch ($what)
 	{
@@ -204,12 +209,16 @@ if ( ! $no_query)
 	        	$hesk_error_buffer .= '<br />' . $hesklang['invalid_search'];
 	        }
 	}
+
+    $sql_count .= $sql;
+    $sql = $sql_previous . $sql;
 }
 
 // Owner
 if ( $tmp = intval( hesk_GET('owner', 0) ) )
 {
 	$sql .= " AND `owner`={$tmp} ";
+    $sql_count .= " AND `owner`={$tmp} ";
 	$owner_input = $tmp;
 	$hesk_error_buffer = str_replace($hesklang['fsq'],'',$hesk_error_buffer);
 }
@@ -239,6 +248,7 @@ if (strlen($dt) == 8)
 	}
 
 	$sql .= " AND `dt` BETWEEN '{$date} 00:00:00' AND '{$date} 23:59:59' ";
+    $sql_count .= " AND `dt` BETWEEN '{$date} 00:00:00' AND '{$date} 23:59:59' ";
 }
 else
 {
@@ -255,11 +265,19 @@ if (strlen($hesk_error_buffer))
 /* This will handle error, success and notice messages */
 $handle = hesk_handle_messages();
 
-# echo "$sql<br/>";
+// Due date
+if ($is_quick_link == 'due')
+{
+    $sql .= " AND `status` != 3 AND `due_date` BETWEEN NOW() AND (NOW() + INTERVAL ".intval($hesk_settings['due_soon'])." DAY) ";
+}
+elseif ($is_quick_link == 'ovr')
+{
+    $sql .= " AND `status` != 3 AND `due_date` < NOW() ";
+}
 
-// That's all the SQL we need for count
-$sql_count .= $sql;
+// Complete the required SQL queries
 $sql = $sql_final . $sql;
+$sql_count .= " GROUP BY `assigned_to`, `due`, `status` ";
 
 // Strip extra slashes
 $q = stripslashes($q);
@@ -270,14 +288,30 @@ require_once(HESK_PATH . 'inc/prepare_ticket_search.inc.php');
 /* If there has been an error message skip searching for tickets */
 if ($handle !== FALSE)
 {
+    $totals = array(
+        'all' => 0,
+        'open' => 0,
+        'resolved' => 0,
+        'filtered' => array(
+            'all' => 0,
+            'open' => 0,
+            'assigned_to_me' => 0,
+            'assigned_to_others' => 0,
+            'assigned_to_others_by_me' => 0,
+            'unassigned' => 0,
+            'due_soon' => 0,
+            'overdue' => 0,
+            'by_status' => array()
+        ),
+    );
+
+    $can_view_unassigned = hesk_checkPermission('can_view_unassigned',0);
+    $can_view_ass_others = hesk_checkPermission('can_view_ass_others',0);
+    $can_view_ass_by = hesk_checkPermission('can_view_ass_by',0);
+
 	$href = 'find_tickets.php';
 	require_once(HESK_PATH . 'inc/ticket_list.inc.php');
 }
-?>
-
-<hr />
-
-<?php
 
 /* Clean unneeded session variables */
 hesk_cleanSessionVars('hide');
@@ -288,5 +322,4 @@ require_once(HESK_PATH . 'inc/show_search_form.inc.php');
 /* Print footer */
 require_once(HESK_PATH . 'inc/footer.inc.php');
 exit();
-
 ?>

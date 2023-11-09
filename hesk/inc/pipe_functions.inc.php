@@ -102,6 +102,9 @@ function hesk_email2ticket($results, $protocol = 0, $set_category = 1, $set_prio
 	$tmpvar['message'] = hesk_makeURL($tmpvar['message']);
 	$tmpvar['message'] = nl2br($tmpvar['message']);
 
+    // Store a copy for RTF-version
+    $tmpvar['message_html'] = $tmpvar['message'];
+
 	# For debugging purposes
     # die( bin2hex($tmpvar['message']) );
     # die($tmpvar['message']);
@@ -196,10 +199,10 @@ function hesk_email2ticket($results, $protocol = 0, $set_category = 1, $set_prio
 
 			// Generate a random file name
 			$useChars='AEUYBDGHJLMNPQRSTVWXZ123456789';
-			$tmp = $useChars{mt_rand(0,29)};
+			$tmp = $useChars[mt_rand(0,29)];
 			for($j=1;$j<10;$j++)
 			{
-			    $tmp .= $useChars{mt_rand(0,29)};
+			    $tmp .= $useChars[mt_rand(0,29)];
 			}
 		    $myatt['saved_name'] = substr($tmpvar['trackid'] . '_' . md5($tmp . $myatt['real_name']), 0, 200) . $ext;
 
@@ -238,7 +241,7 @@ function hesk_email2ticket($results, $protocol = 0, $set_category = 1, $set_prio
 		hesk_dbQuery("UPDATE `".hesk_dbEscape($hesk_settings['db_pfix'])."replies` SET `read` = '1' WHERE `replyto` = '".intval($ticket['id'])."' AND `staffid` != '0' ");
 
 		// Insert reply into database
-		hesk_dbQuery("INSERT INTO `".hesk_dbEscape($hesk_settings['db_pfix'])."replies` (`replyto`,`name`,`message`,`dt`,`attachments`) VALUES ('".intval($ticket['id'])."','".hesk_dbEscape($ticket['lastreplier'])."','".hesk_dbEscape($tmpvar['message'])."',NOW(),'".hesk_dbEscape($tmpvar['attachments'])."')");
+		hesk_dbQuery("INSERT INTO `".hesk_dbEscape($hesk_settings['db_pfix'])."replies` (`replyto`,`name`,`message`,`message_html`,`dt`,`attachments`) VALUES ('".intval($ticket['id'])."','".hesk_dbEscape($ticket['lastreplier'])."','".hesk_dbEscape($tmpvar['message'])."','".hesk_dbEscape($tmpvar['message'])."',NOW(),'".hesk_dbEscape($tmpvar['attachments'])."')");
 
 		// --> Prepare reply message
 
@@ -257,7 +260,9 @@ function hesk_email2ticket($results, $protocol = 0, $set_category = 1, $set_prio
 		'attachments'	=> $tmpvar['attachments'],
 		'dt'			=> hesk_date($ticket['dt'], true),
 		'lastchange'	=> hesk_date($ticket['lastchange'], true),
+        'due_date'      => hesk_format_due_date($ticket['due_date']),
         'id'			=> $ticket['id'],
+        'time_worked'   => $ticket['time_worked'],
 		);
 
 		// 2. Add custom fields to the array
@@ -325,7 +330,7 @@ function hesk_email2ticket($results, $protocol = 0, $set_category = 1, $set_prio
 	if ($autoassign_owner)
 	{
 		$tmpvar['owner'] = $autoassign_owner['id'];
-	    $tmpvar['history'] .= sprintf($hesklang['thist10'],hesk_date(),$autoassign_owner['name'].' ('.$autoassign_owner['user'].')');
+	    $tmpvar['history'] .= sprintf($hesklang['thist10'],hesk_date(),addslashes($autoassign_owner['name']).' ('.$autoassign_owner['user'].')');
         $tmpvar['assignedby'] = -1;
 	}
 
@@ -458,7 +463,8 @@ function hesk_isReturnedEmail($tmpvar)
 	preg_match('/DELIVERY FAILURE/i', $tmpvar['subject']) ||
 	preg_match('/Undelivered Mail Returned to Sender/i', $tmpvar['subject']) ||
 	preg_match('/Delivery Status Notification \(Failure\)/i', $tmpvar['subject']) ||
-	preg_match('/Returned mail\: see transcript for details/i', $tmpvar['subject'])
+	preg_match('/Returned mail\: see transcript for details/i', $tmpvar['subject']) ||
+    preg_match('/^Undeliverable\:/i', $tmpvar['subject'])
 	)
 	{
 		return true;

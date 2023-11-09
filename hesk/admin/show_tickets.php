@@ -35,28 +35,21 @@ require_once(HESK_PATH . 'inc/header.inc.php');
 
 /* Print admin navigation */
 require_once(HESK_PATH . 'inc/show_admin_nav.inc.php');
-
 ?>
-</td>
-</tr>
-<tr>
-<td>
 
+<div class="main__content tickets">
+<div style="margin-left: -16px; margin-right: -24px;">
 <?php
+
 /* This will handle error, success and notice messages */
 hesk_handle_messages();
 ?>
-
-<table style="width:100%;border:none;border-collapse:collapse;"><tr>
-<td style="width:25%"><label><input type="checkbox" onclick="toggleAutoRefresh(this);" id="reloadCB"> <?php echo $hesklang['arp']; ?> <span id="timer"></span></label><script type="text/javascript">heskCheckReloading();</script></td>
-<td style="width:50%;text-align:center"><h3><?php echo $hesklang['tickets']; ?></h3></td>
-<td style="width:25%;text-align:right"><a href="new_ticket.php"><?php echo $hesklang['nti']; ?></a></td>
-</tr>
-</table>
-
+</div>
 <?php
+
 /* Print the list of tickets */
 $is_search = 1;
+$href = 'show_tickets.php';
 require_once(HESK_PATH . 'inc/print_tickets.inc.php');
 
 /* Update staff default settings? */

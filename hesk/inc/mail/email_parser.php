@@ -147,7 +147,7 @@ function process_addrname_pairs($email_info)
 function process_attachments($attachments)
 {
 	$result = array();
-	foreach($attachments as $info)
+	foreach($attachments as $key => $info)
     {
 		$orig_name = "";
 		$size = 0;
@@ -163,6 +163,10 @@ function process_attachments($attachments)
         {
 			$orig_name = $info["FileName"];
 		}
+        elseif ($type == 'message')
+        {
+            $orig_name = ($key + 1) . ".msg";
+        }
 
 		if ( ! strlen($orig_name))
         {
@@ -285,7 +289,7 @@ function process_results($result,$tempdir)
 	// Convert to UTF-8 before processing further
 	if ($r["encoding"] != "" && $r["encoding"] != 'UTF-8')
 	{
-		$result["Data"] = $result["Data"] == "" ? "" : iconv($r["encoding"], 'UTF-8', $result["Data"]);
+		$result["Data"] = $result["Data"] == "" ? "" : (function_exists('iconv') ? iconv($r["encoding"], 'UTF-8', $result["Data"]) : utf8_encode($result["Data"]));
 		$r["encoding"] = 'UTF-8';
 	}
 
@@ -299,13 +303,19 @@ function process_results($result,$tempdir)
 		$r["message"] = $result["Data"];
 	}
 
+    // Fix for inline attachments
+    if (isset($result["FileDisposition"]) && ($result["FileDisposition"] == "attachment" || $result["FileDisposition"] == "inline"))
+    {
+        $r["message"] = "";
+    }
+
 	// Message attachments
     $r["attachments"] = array();
 
 	if ($hesk_settings['attachments'])
     {
 		// Attachment with no message
-		if ( isset($result["FileDisposition"]) && $result["FileDisposition"] == "attachment")
+		if ( isset($result["FileDisposition"]) && ($result["FileDisposition"] == "attachment" || $result["FileDisposition"] == "inline"))
 		{
 			$tmp = array();
 			$tmp[0]['FileDisposition'] = "attachment";
@@ -554,7 +564,7 @@ class html2text
         '/(<ol[^>]*>|<\/ol>)/i',                 // <ol> and </ol>
         '/<li[^>]*>(.*?)<\/li>/i',               // <li> and </li>
         '/<li[^>]*>/i',                          // <li>
-        '/<a [^>]*href="([^"]+)"[^>]*>(.*?)<\/a>/i',
+        '/<a [^>]*href=["\']([^"\']+)["\'][^>]*>(.*?)<\/a>/i',
                                                  // <a href="">
         '/<hr[^>]*>/i',                          // <hr>
         '/(<table[^>]*>|<\/table>)/i',           // <table> and </table>
@@ -590,7 +600,7 @@ class html2text
         "\n\n",                                 // <ol> and </ol>
         "\t* \\1\n",                            // <li> and </li>
         "\n\t* ",                               // <li>
-        "\\1",                                  // <a href="">
+        "\\2:\n\\1",                            // <a href="">
         "\n-------------------------\n",        // <hr>
         "\n\n",                                 // <table> and </table>
         "\n",                                   // <tr> and </tr>
@@ -783,7 +793,7 @@ class html2text
         $text = trim($this->html);
 
         // Remove embedded image tags
-        $text = preg_replace('/<img[^>]*>/i', $hesklang['emrem'], $text);
+        $text = preg_replace('/<img.*?src=["\']+(.*?)["\']+.*?>/i', '$1', $text);
 
         // Run our defined search-and-replace
         $text = preg_replace($this->search, $this->replace, $text);
