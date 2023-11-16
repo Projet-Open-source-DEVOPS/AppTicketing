@@ -1,25 +1,34 @@
-# Utiliser l'image Debian
-FROM debian
+FROM php:8.2.4-apache
 
-# Mise à jour et installation des packages
-RUN apt update && \
-    apt install -y vim git nginx
-    
-# Copier le contenu du dépôt GitHub dans le répertoire /var/www/html
-ADD https://github.com/Projet-Open-source-DEVOPS/AppTicketing/archive/main.tar.gz /var/www/html/
+# Set the working directory inside the container
+WORKDIR /var/www/html
 
-# Décompresser le fichier tar.gz
-RUN tar -xzvf /var/www/html/main.tar.gz -C /var/www/html/ --strip-components=1 && \
-    rm /var/www/html/main.tar.gz
+# Copy HESK files into the container
+COPY ./hesk /var/www/html
 
-# Copier un script de démarrage
-COPY start.sh /start.sh
+# Enable Apache rewrite module
+RUN a2enmod rewrite
 
-# Donner des droits d'exécution au script
-RUN chmod +x /start.sh
+# Update and install dependencies
+RUN apt-get update \
+    && apt-get install -y \
+        libc-client-dev \
+        libkrb5-dev \
+        --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Exposition du port 80 pour Nginx
+# Configure and install PHP extensions
+RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl && \
+    docker-php-ext-install mysqli imap
+
+# Expose port 80
 EXPOSE 80
 
-# Commande par défaut pour démarrer le conteneur
-CMD ["/start.sh"]
+# Remove default Apache index.html
+RUN rm -f /var/www/html/index.html
+
+# Configure Apache to use index.php
+RUN sed -i 's/DirectoryIndex index.html/DirectoryIndex index.php/g' /etc/apache2/mods-available/dir.conf
+
+CMD ["apache2-foreground"]
