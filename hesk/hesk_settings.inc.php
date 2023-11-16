@@ -23,7 +23,7 @@ $hesk_settings['languages']=array(
 );
 
 // --> Database settings
-$hesk_settings['db_host']='172.24.0.2';
+$hesk_settings['db_host']='172.25.0.2';
 $hesk_settings['db_name']='hesk';
 $hesk_settings['db_user']='admin';
 $hesk_settings['db_pass']='admin';
