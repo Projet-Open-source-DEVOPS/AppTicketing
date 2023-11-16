@@ -5,9 +5,9 @@
 
 // --> General settings
 $hesk_settings['site_title']='Website';
-$hesk_settings['site_url']='http://www.example.com';
+$hesk_settings['site_url']='http://localhost:8080';
 $hesk_settings['hesk_title']='Help Desk';
-$hesk_settings['hesk_url']='http://www.example.com/helpdesk';
+$hesk_settings['hesk_url']='http://localhost:8080';
 $hesk_settings['webmaster_mail']='support@example.com';
 $hesk_settings['noreply_mail']='support@example.com';
 $hesk_settings['noreply_name']='Help Desk';
@@ -19,14 +19,14 @@ $hesk_settings['admin_css_url']='https://www.example.com/hesk-style.css';
 $hesk_settings['can_sel_lang']=0;
 $hesk_settings['language']='English';
 $hesk_settings['languages']=array(
-    'English' => array('folder'=>'en','hr'=>'------ Reply above this line ------'),
+'English' => array('folder'=>'en','hr'=>'------ Reply above this line ------'),
 );
 
 // --> Database settings
-$hesk_settings['db_host']='localhost';
+$hesk_settings['db_host']='172.24.0.2';
 $hesk_settings['db_name']='hesk';
-$hesk_settings['db_user']='test';
-$hesk_settings['db_pass']='test';
+$hesk_settings['db_user']='admin';
+$hesk_settings['db_pass']='admin';
 $hesk_settings['db_pfix']='hesk_';
 
 
@@ -69,14 +69,14 @@ $hesk_settings['cat_show_select']=15;
 $hesk_settings['staff_ticket_formatting']=0;
 
 // --> SPAM Prevention
-$hesk_settings['secimg_use']=1;
+$hesk_settings['secimg_use']=0;
 $hesk_settings['secimg_sum']='13N4BRS4WW';
 $hesk_settings['recaptcha_use']=0;
 $hesk_settings['recaptcha_public_key']='';
 $hesk_settings['recaptcha_private_key']='';
 $hesk_settings['question_use']=0;
-$hesk_settings['question_ask']='Type <i>PB6YM</i> here to fight SPAM:';
-$hesk_settings['question_ans']='PB6YM';
+$hesk_settings['question_ask']='Are you a human? (yes or no)';
+$hesk_settings['question_ans']='yes';
 
 // --> Security
 $hesk_settings['attempt_limit']=6;
@@ -87,14 +87,14 @@ $hesk_settings['email_view_ticket']=1;
 $hesk_settings['x_frame_opt']=1;
 $hesk_settings['samesite']='Lax';
 $hesk_settings['force_ssl']=0;
-$hesk_settings['url_key']='';
+$hesk_settings['url_key']='mYQYHM9b.5RVwzrf8StF9HF';
 
 // --> Attachments
 $hesk_settings['attachments']=array (
-    'use' => 1,
-    'max_number' => 2,
-    'max_size' => 2097152,
-    'allowed_types' => array('.gif','.jpg','.png','.zip','.rar','.csv','.doc','.docx','.xls','.xlsx','.txt','.pdf')
+'use' => 1,
+'max_number' => 2,
+'max_size' => 2097152,
+'allowed_types' => array('.gif','.jpg','.png','.zip','.rar','.csv','.doc','.docx','.xls','.xlsx','.txt','.pdf')
 );
 
 
