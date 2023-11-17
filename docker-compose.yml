@@ -18,6 +18,9 @@ services:
   db:
     image: mysql:latest
     container_name: my-mysql
+    restart: always
+    volumes:
+      - ./hesk/mysql-dump:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: hesk
@@ -26,7 +29,7 @@ services:
     networks:
       my_network:
         ipv4_address: 172.25.0.5
-  
+      
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: my-phpmyadmin
