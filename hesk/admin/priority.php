@@ -41,13 +41,13 @@ if ($priority < 0 || $priority > 3)
 }
 
 $options = array(
-	0 => '<font class="critical">'.$hesklang['critical'].'</font>',
-	1 => '<font class="important">'.$hesklang['high'].'</font>',
-	2 => '<font class="medium">'.$hesklang['medium'].'</font>',
+	0 => $hesklang['critical'],
+	1 => $hesklang['high'],
+	2 => $hesklang['medium'],
 	3 => $hesklang['low']
 );
 
-$revision = sprintf($hesklang['thist8'],hesk_date(),$options[$priority],$_SESSION['name'].' ('.$_SESSION['user'].')');
+$revision = sprintf($hesklang['thist8'],hesk_date(),$options[$priority],addslashes($_SESSION['name']).' ('.$_SESSION['user'].')');
 
 hesk_dbQuery("UPDATE `".hesk_dbEscape($hesk_settings['db_pfix'])."tickets` SET `priority`='{$priority}', `history`=CONCAT(`history`,'".hesk_dbEscape($revision)."') WHERE `trackid`='".hesk_dbEscape($trackingID)."'");
 if (hesk_dbAffectedRows() != 1)

@@ -26,7 +26,6 @@ hesk_isLoggedIn();
 
 /* Check permissions for this feature */
 hesk_checkPermission('can_view_tickets');
-hesk_checkPermission('can_reply_tickets');
 
 /* A security check */
 hesk_token_check();
@@ -44,6 +43,12 @@ if ( ! isset($hesk_settings['statuses'][$status]))
 	hesk_process_messages($hesklang['instat'],'admin_ticket.php?track='.$trackingID.'&Refresh='.mt_rand(10000,99999),'NOTICE');
 }
 
+// We need can_reply_tickets permission unless we are closing a ticket
+if ($status != 3)
+{
+    hesk_checkPermission('can_reply_tickets');
+}
+
 $locked = 0;
 
 if ($status == 3) // Closed
@@ -54,7 +59,7 @@ if ($status == 3) // Closed
     }
 
 	$action = $hesklang['ticket_been'] . ' ' . $hesklang['closed'];
-    $revision = sprintf($hesklang['thist3'],hesk_date(),$_SESSION['name'].' ('.$_SESSION['user'].')');
+    $revision = sprintf($hesklang['thist3'],hesk_date(),addslashes($_SESSION['name']).' ('.$_SESSION['user'].')');
 
     if ($hesk_settings['custopen'] != 1)
     {
@@ -73,6 +78,7 @@ if ($status == 3) // Closed
 		$ticket = hesk_dbFetchAssoc($result);
 		$ticket['dt'] = hesk_date($ticket['dt'], true);
 		$ticket['lastchange'] = hesk_date($ticket['lastchange'], true);
+        $ticket['due_date'] = hesk_format_due_date($ticket['due_date']);
 		$ticket = hesk_ticketToPlain($ticket, 1, 0);
 
 		// Notify customer
@@ -87,7 +93,7 @@ elseif ($status != 0)
 {
     $status_name = hesk_get_status_name($status);
 	$action = sprintf($hesklang['tsst'], $status_name);
-    $revision = sprintf($hesklang['thist9'],hesk_date(),$status_name,$_SESSION['name'].' ('.$_SESSION['user'].')');
+    $revision = sprintf($hesklang['thist9'],hesk_date(),addslashes($status_name),addslashes($_SESSION['name']).' ('.$_SESSION['user'].')');
 
 	// Ticket is not resolved
 	$closedby_sql = ' , `closedat`=NULL, `closedby`=NULL ';
@@ -95,7 +101,7 @@ elseif ($status != 0)
 else // Opened
 {
 	$action = $hesklang['ticket_been'] . ' ' . $hesklang['opened'];
-    $revision = sprintf($hesklang['thist4'],hesk_date(),$_SESSION['name'].' ('.$_SESSION['user'].')');
+    $revision = sprintf($hesklang['thist4'],hesk_date(),addslashes($_SESSION['name']).' ('.$_SESSION['user'].')');
 
 	// Ticket is not resolved
 	$closedby_sql = ' , `closedat`=NULL, `closedby`=NULL ';

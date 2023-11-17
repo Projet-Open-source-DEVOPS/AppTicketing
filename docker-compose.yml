@@ -11,6 +11,9 @@ services:
       - ./hesk:/var/www/html
     depends_on:
       - db
+    networks:
+      my_network:
+        ipv4_address: 172.25.0.7
 
   db:
     image: mysql:latest
@@ -20,7 +23,10 @@ services:
       MYSQL_DATABASE: hesk
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
-
+    networks:
+      my_network:
+        ipv4_address: 172.25.0.5
+  
   phpmyadmin:
     image: phpmyadmin/phpmyadmin:latest
     container_name: my-phpmyadmin
@@ -31,3 +37,14 @@ services:
       - "8081:80"
     depends_on:
       - db
+    networks:
+      my_network:
+        ipv4_address: 172.25.0.6
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.25.0.0/24
+         gateway: 172.25.0.253

@@ -9,14 +9,14 @@
 <body>
 <div id="wrapper">
 <div id="main">
-<h1><span class="dest">HESK&trade;</span> PHP Help Desk Software</h1>
+<h1><span class="dest">HESK</span><sup>&reg;</sup> PHP Help Desk Software</h1>
 
 <table width="100%">
 <tr>
 <td width="50%" style="text-align:left;vertical-align:top">
  <ul class="nobullets">
- <li>Version: 2.8.2 from 5th July 2018</li>
- <li>Developed by: Klemen Stirn</li>
+ <li>Version: 3.2.5 from 6th January 2022</li>
+ <li>Developed by: Klemen Stirn, Mike Koch</li>
  <li><a href="https://www.hesk.com">Help Desk Software HESK</a></li>
  <li><a href="https://www.phpjunkyard.com">Free PHP Scripts</a></li>
  </ul>
@@ -32,7 +32,213 @@
 </tr>
 </table>
 
-<h2>HESK CHANGELOG</h2>
+<h2>HESK 3 CHANGELOG</h2>
+
+<p><b>Changes in 3.2.5</b> - 6th January 2022<br />
+- updates for PHP 8.1 depreciated functionality<br />
+- fix: long URL addresses stretch the ticket window<br />
+- fix: status selection in ticket export form not working under certain conditions<br />
+- fix: missing array key 'time_worked' in email to ticket function reply notification<br />
+- fix: user setting for overdue ticket notifications not always respected<br />
+- fix: using &quot;Submit as Resolved&quot; doesn't update &quot;closed at&quot; date<br />
+- fix: forgot ticket ID modal close button not working on small screens<br />
+- updated HTMLPurifier to 4.14.0<br />
+- updated TinyMCE to 5.10.2<br />
+</p>
+
+<p><b>Changes in 3.2.4</b> - 2nd October 2021<br />
+- added &quot;Due date&quot; tag for canned responses<br />
+- security: error message not appropriately sanitized, reported by msry1<br />
+- fix: insert canned responses tags at pointer focus<br />
+- fix: inconsistent storage of plain text message version in RTF mode<br />
+- fix: due date not formatted for staff with view-only access<br />
+- fix: avatar uppercase letter shows ? in multi-byte names<br />
+- fix: cannot uncheck &quot;Assigned to others&quot; on ticket export page<br />
+- updated TinyMCE to 5.9.2<br />
+- minor styling and usability changes<br />
+</p>
+
+<p><b>Changes in 3.2.3</b> - 11th August 2021<br />
+- automatically link URLs in TinyMCE by default<br />
+- removed the <i>db_vrsn</i> setting, it is not needed anymore<br />
+- all ticket list pages now show the &quot;Auto reload page&quot; widget<br />
+- fix: forgot ticket ID email list does not include tickets with a custom status<br />
+- fix: the &quot;reply below this line&quot; tag not added in IMAP fetching<br />
+- fix: add an extra empty space after ticket tracking URL to make them clickable in Outlook<br />
+- fix: overdue cron notifications not working if date format is not YYYY-MM-DD<br />
+- fix: installation script doesn't accept UTF-8 chars for admin username<br />
+- fix: priority pre-select via URL parameter doesn't work in the public side<br />
+- fix: unable to sort ticket columns after setting a default view<br />
+- fix: Hesk doesn't accept database username with &amp;<br />
+- updated TinyMCE to 5.8.2<br />
+</p>
+
+<p><b>Changes in 3.2.2</b> - 13th March 2021<br />
+- fix: replies via email not showing content when Rich Text (HTML) formatting is turned on<br />
+- fix: reset ticket session data if any variable is sent to the Create new ticket form<br />
+- due date and ticket language parameters can now be passed to the Create new ticket form<br />
+</p>
+
+<p><b>Changes in 3.2.1</b> - 11th March 2021<br />
+- fix: merged tickets not showing replies with Rich Text (HTML) formatting turned on<br />
+- fix: SMTP class does not support TLS 1.2 in PHP &gt;= 5.6.7 and &lt; PHP 7.2<br />
+- fix: admin panel modals hidden on small screens<br />
+- updated TinyMCE to 5.7.0<br />
+</p>
+
+<p><b>Changes in 3.2.0</b> - 28th February 2021<br />
+- [<a href="https://www.hesk.com/get/hesk3-escalate">CLOUD ONLY</a>] Escalate module: create rules to escalate tickets automatically<br />
+- tickets can now have a due date set<br />
+- added support for HTML-formatted ticket messages/replies (staff only)<br />
+- added links to filter tickets by assignment/due soon/overdue quickly<br />
+- do not update &quot;lastchange&quot; timestamp on Resolved tickets when deleting a user or category<br />
+- support for %%SITE_TITLE%% in email subjects<br />
+- improved button text display on non-English versions<br />
+- added an easy way to load an extra custom CSS file to Hesk admin<br />
+- staff can now change ticket category when submitting a ticket<br />
+- staff can now set ticket (customer) language when submitting a ticket<br />
+- cron files can now have an access key set to authorize web access<br />
+- security: fixed persistent XSS, reported by Charley Celice of Quorum Cyber (<a href="https://www.quorumcyber.com/">www</a>)<br />
+- fix: make sure ticket list always has clickable links in mobile view<br />
+- fix: ticket list mismatch after deleting a custom field<br />
+- fix: check if JSON is enabled when installing/updating Hesk<br />
+- fix: bulk ticket actions select vertical scroll bar off-screen on some mobile devices<br />
+- fix: set cookie SameSite attribute to &quot;None&quot; if Hesk is allowed to be displayed in frames<br />
+- fix: message encoding issue when previewing service messages<br />
+- fix: properly escape edge-case HTML special characters and backslashes<br />
+- fix: &quot;Can unban ips&quot; permission should also enable &quot;Can ban ips&quot;<br />
+- fix: email notification setting when someone adds a note not respected<br />
+- fix: respect custom field position when editing a ticket<br />
+- fix: properly encode CDATA closing tag<br />
+- minor styling and usability changes<br />
+</p>
+
+<p><b>Changes in 3.1.2</b> - 18th August 2020<br />
+- the &quot;Submit as&quot; control in staff reply form now supports all statuses<br />
+- don't change the &quot;last updated&quot; value of tickets when deleting a custom field<br />
+- prevent a corrupted hesk_kb_categories table causing an infinite loop<br />
+- show ticket subject and notes at the top with &quot;Newest reply at top&quot; setting selected<br />
+- when submitting a ticket from the admin panel Hesk will now pre-select default category priority<br />
+- implemented SameSite cookie attribute support<br />
+- fix: the top &quot;Re-send email notification&quot; should send new ticket notification, not new reply<br />
+- fix: language string with a single quote breaks calendar translation<br />
+- fix: use quoting mechanism for special interpretation characters in mail from header<br />
+- fix: on Profile page cannot select &quot;Show the ticket I just replied to&quot;<br />
+- fix: contact details hidden in languages with a long title translation<br />
+- fix: cannot select a language for service messages<br />
+- fix: parsing of a non-utf8 email fails if Iconv functions are not available<br />
+- fix: only list users whom the ticket can be assigned to when submitting a new ticket<br />
+- updated third party libraries to the latest version<br />
+- minor styling and usability changes<br />
+</p>
+
+
+<p><b>Changes in 3.1.1</b> - 3rd May 2020<br />
+- knowledgebase now shows full category structure in breadcrumbs<br />
+- added custom favicon for better display on different devices<br />
+- fix: saving general settings resets sending emails to PHP mail()<br />
+- fix: sub-categories with no articles are hidden in customer side<br />
+- fix: in customer side knowledgebase votes show views<br />
+- fix: knowledgebase sub-category preview shows 1 article too many<br />
+- fix: knowledgebase views show 1 less than actual when viewing an article<br />
+- fix: non-default time format may show staff replies as &quot;50 years ago&quot; in customer-side<br />
+- fix: custom header and footer are outside of the main wapper<br />
+- minor styling and usability changes<br />
+</p>
+
+<p><b>Changes in 3.1.0</b> - 7th April 2020<br />
+- [<a href="https://www.hesk.com/get/hesk3-statistics">CLOUD ONLY</a>] Statistics module: insight into help desk usage and staff performance<br />
+- choose the desired ticket reply hiding logic<br />
+- added tooltips to action icons without a label<br />
+- descriptive timestamps in ticket details (e.g., 5 hours ago)<br />
+- improved ticket content readability, including adjustable max-width<br />
+- improved formatting of WYSIWYG-generated content<br />
+- improved customer-side display in Internet Explorer 9<br />
+- security: fixed a reflected XSS, reported by Mostafa Gamal &amp; Ahmed Sherif<br />
+- fix: hide the link to Export tickets page if the user has no export permission<br />
+- fix: HTML header code printed twice on the knowledgebase results page<br />
+- fix: properly strip slashes and encode HTML in service messages<br />
+- fix: custom text and hidden fields don't display a default value in admin panel &gt; New ticket<br />
+- fix: custom text field maxlength not working in customer side<br />
+- fix: ticket replies not hidden correctly with "Newest reply at top"<br />
+- fix: if a settings label is long it doesn't align nicely<br />
+- fix: some hard-coded text cannot be translated<br />
+- fix: show full custom field names in customer submit a ticket form<br />
+- fix: when multiple languages are allowed, cannot add a custom status<br />
+- fix: when multiple languages are allowed, editing a custom field shows empty field names<br />
+- fix: IMAP &quot;Keep a copy&quot; checkbox not saving<br />
+- fix: cannot allow single char attachment extensions<br />
+- minor styling and usability changes<br />
+</p>
+
+<p><b>Changes in 3.0.3</b> - 8th March 2020<br />
+- fix: customer ticket reminder form not working in 3.0.2<br />
+</p>
+
+<p><b>Changes in 3.0.2</b> - 3rd March 2020<br />
+- fix: settings for POP3 fetching not saving<br />
+- fix: the style of subject and message inputs changes when selecting a ticket template<br />
+- fix: issues with selecting drop-down select box values<br />
+- fix: cannot change ticket status to &quot;New&quot;<br />
+- fix: unable to append or select canned responses in some situations<br />
+- fix: Javascript not escaping converted HTML code properly<br />
+- fix: duplicate &quot;Assign this ticket to myself&quot; in the reply form<br />
+- fix: ticket details not responsive in Edge<br />
+- fix: Undefined offset notice in ticket history<br />
+- tickets with status &quot;Critical&quot; now have a distinctive background color in ticket list<br />
+- minor styling and usability changes<br />
+</p>
+
+<p><b>Changes in 3.0.1</b> - 27th February 2020<br />
+- fix: suppress browser errors when multiple email addresses are allowed<br />
+- fix: properly escape variables when saving settings<br />
+- fix: confirm email always returns an error<br />
+- fix: hesk_error() function should exit not return for end-users<br />
+- fix: unable to append or select canned responses in some situations<br />
+- minor styling and usability changes<br />
+</p>
+
+<p><b>Changes in 3.0.0</b> - 17th February 2020<br />
+- a brand new mobile-friendly user interface<br />
+- built-in theme support for the public (customer) interface<br />
+- fix: SQL error when trying to ban an invalid IP<br />
+</p>
+
+<h2>HESK 2 CHANGELOG</h2>
+
+<p><b>Changes in 2.8.6</b> - 7th April 2020<br />
+- security: fixed a reflected XSS, reported by Mostafa Gamal &amp; Ahmed Sherif<br />
+- fix: SQL error when trying to ban an invalid IP<br />
+- fix: properly strip slashes and encode HTML in service messages<br />
+- fix: cannot allow single char attachment extensions<br />
+</p>
+
+<p><b>Changes in 2.8.5</b> - 6th January 2020<br />
+- PHP 7.4 compatibility<br />
+- MySQL 8.0.13 compatibility<br />
+- users with no can_reply_tickets permission can now create ticket notes<br />
+- updated third party libraries to the latest version<br />
+- fix: respect article order in Knowledgebase<br />
+- fix: save email attachments sent as message content type<br />
+- fix: better handle can_resolve and can_reply_tickets permissions<br />
+</p>
+
+<p><b>Changes in 2.8.4</b> - 17th August 2019<br />
+- fix: modified the HTMLPurifier library to be compatible with PHP 5.3<br />
+</p>
+
+<p><b>Changes in 2.8.3</b> - 16th August 2019<br />
+- fix: break long words when bulk printing tickets<br />
+- fix: HTML-encoded chars can cause MySQL truncate error<br />
+- fix: parse links with single quotes in HTML email to ticket<br />
+- fix: wrong option for staff re-send notification of an assigned ticket<br />
+- fix: in email to ticket inline attachments with no message are not imported correctly<br />
+- fix: descriptive error message when post_max_size is exceeded for customer interface<br />
+- fix: link to embedded image tags rather than deleting them<br />
+- fix: no image in service messages list for style &quot;None&quot;<br >
+- fix: pagination does not work when searching for tickets by owner<br />
+- fix: workaround for a Microsoft DKIM verification bug<br />
+</p>
 
 <p><b>Changes in 2.8.2</b> - 5th July 2018<br />
 - service messages can be set to display for a specific language only<br />
@@ -608,7 +814,8 @@
 
 <p>&nbsp;</p>
 
-<p style="text-align:center">&copy; Copyright <a href="https://www.hesk.com">HESK.COM</a> 2005-2018. All rights reserved.</p>
+<p style="text-align:center">&copy; Copyright <a href="https://www.hesk.com">HESK.COM</a> 2005-2022. All rights reserved.<br />
+&reg; HESK is a registered trademark of Klemen Stirn.</p>
 
 </div>
 </div>
