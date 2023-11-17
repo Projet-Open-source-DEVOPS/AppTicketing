@@ -22,3 +22,16 @@ The script for windows will come later.
 The website by default will be available at `localhost:8080/`
 
 The PhpMyAdmin interface is available at `localhost:8081/`
+
+## FAQ
+### When I run the launch.sh script, I have the error : /bin/bash^M : bad interpreter
+
+Type this command on your bash terminal :
+```bash
+sed -i -e 's/\r$//' launch.sh
+```
+
+And try running it again, it should works.
+```bash
+./launch.sh
+```
