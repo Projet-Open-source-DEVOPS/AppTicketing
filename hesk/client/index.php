@@ -141,10 +141,10 @@ function do_login()
 
 	/* User entered all required info, now lets limit brute force attempts */
 	hesk_limitBfAttempts();
-    $result = hesk_dbQuery("SELECT * FROM `".hesk_dbEscape($hesk_settings['db_pfix'])."users` WHERE `user` = '".hesk_dbEscape($user)."' AND `isadmin` = '1' LIMIT 1");
-    
-	if (hesk_dbNumRows($result) != 1)
-	{
+
+	$result = hesk_dbQuery("SELECT * FROM `".hesk_dbEscape($hesk_settings['db_pfix'])."users` WHERE `user` = '".hesk_dbEscape($user)."' AND ``isadmin` = '0' LIMIT 1");
+
+	if (hesk_dbNumRows($result) != 1){
         hesk_session_stop();
     	$_SESSION['a_iserror'] = array('user','pass');
     	hesk_process_messages($hesklang['wrong_user'],'NOREDIRECT');
@@ -163,7 +163,6 @@ function do_login()
     {
         hesk_session_stop();
     	$_SESSION['a_iserror'] = array('pass');
-		hesk_process_messages($hesklang['wrong_pass'],'NOREDIRECT');
 		print_login();
 		exit();
 	}

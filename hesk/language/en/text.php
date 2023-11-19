@@ -554,6 +554,7 @@ $hesklang['repl']='Selected post has been deleted';
 $hesklang['tickets_found']='Search results';
 $hesklang['al']='Admin link';
 $hesklang['ap']='Go to Administration Panel';
+$hesklang['cp']='Go to Customer Panel';
 $hesklang['dap']='Display a link to admin panel from <a href="../" target="_blank">help desk index</a>';
 $hesklang['q_miss']='Please answer the anti-SPAM question';
 $hesklang['use_q']='Use anti-SPAM question';

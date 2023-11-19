@@ -34,6 +34,7 @@ $hesk_settings['db_pfix']='hesk_';
 
 // --> Help desk settings
 $hesk_settings['admin_dir']='admin';
+$hesk_settings['customer_dir'] = 'client';
 $hesk_settings['attach_dir']='attachments';
 $hesk_settings['cache_dir']='cache';
 $hesk_settings['max_listings']=20;

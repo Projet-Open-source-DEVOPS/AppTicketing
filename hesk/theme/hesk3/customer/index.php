@@ -95,32 +95,27 @@ require_once(TEMPLATE_PATH . 'customer/util/rating.php');
         </div>
         <div class="main__content">
             <div class="contr">
-                <div class="help-search">
-                    <h2 class="search__title"><?php echo $hesklang['how_can_we_help']; ?></h2>
-                    <?php displayKbSearch(); ?>
-                </div>
                 <?php hesk3_show_messages($service_messages); ?>
                 <div class="nav">
-                    <a href="index.php?a=add" class="navlink">
-                        <div class="icon-in-circle">
-                            <svg class="icon icon-submit-ticket">
-                                <use xlink:href="<?php echo TEMPLATE_PATH; ?>customer/img/sprite.svg#icon-submit-ticket"></use>
-                            </svg>
-                        </div>
-                        <div>
-                            <h5 class="navlink__title"><?php echo $hesklang['submit_ticket']; ?></h5>
-                            <div class="navlink__descr"><?php echo $hesklang['open_ticket']; ?></div>
-                        </div>
-                    </a>
-                    <a href="ticket.php" class="navlink">
+                    <a href="<?php echo $hesk_settings['admin_dir']; ?>/" class="navlink">
                         <div class="icon-in-circle">
                             <svg class="icon icon-document">
-                                <use xlink:href="<?php echo TEMPLATE_PATH; ?>customer/img/sprite.svg#icon-document"></use>
+                                <use xlink:href="<?php echo TEMPLATE_PATH; ?>customer/img/sprite.svg#icon-admin"></use>
                             </svg>
                         </div>
                         <div>
-                            <h5 class="navlink__title"><?php echo $hesklang['view_existing_tickets']; ?></h5>
-                            <div class="navlink__descr"><?php echo $hesklang['vet']; ?></div>
+                            <h5 class="navlink__title"><?php echo $hesklang['ap']; ?></h5>
+                        </div>
+                    </a>
+                    <!-- Change link in variable hesk_settings -->
+                    <a href="<?php echo $hesk_settings['customer_dir']; ?>/" class="navlink">
+                        <div class="icon-in-circle">
+                            <svg class="icon icon-document">
+                                <use xlink:href="<?php echo TEMPLATE_PATH; ?>customer/img/sprite.svg#icon-customer"></use>
+                            </svg>
+                        </div>
+                        <div>
+                            <h5 class="navlink__title"><?php echo $hesklang['cp']; ?></h5>
                         </div>
                     </a>
                 </div>
@@ -252,9 +247,6 @@ require_once(TEMPLATE_PATH . 'customer/util/rating.php');
                 endif;
                 if ($hesk_settings['alink']):
                 ?>
-                <div class="article__footer">
-                    <a href="<?php echo $hesk_settings['admin_dir']; ?>/" class="link"><?php echo $hesklang['ap']; ?></a>
-                </div>
                 <?php endif; ?>
             </div>
         </div>
