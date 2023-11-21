@@ -107,17 +107,6 @@ require_once(TEMPLATE_PATH . 'customer/util/rating.php');
                             <h5 class="navlink__title"><?php echo $hesklang['ap']; ?></h5>
                         </div>
                     </a>
-                    <!-- Change link in variable hesk_settings -->
-                    <a href="<?php echo $hesk_settings['customer_dir']; ?>/" class="navlink">
-                        <div class="icon-in-circle">
-                            <svg class="icon icon-document">
-                                <use xlink:href="<?php echo TEMPLATE_PATH; ?>customer/img/sprite.svg#icon-customer"></use>
-                            </svg>
-                        </div>
-                        <div>
-                            <h5 class="navlink__title"><?php echo $hesklang['cp']; ?></h5>
-                        </div>
-                    </a>
                 </div>
                 <?php if ($hesk_settings['kb_enable']): ?>
                 <article class="article">

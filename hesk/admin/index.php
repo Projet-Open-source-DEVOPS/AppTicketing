@@ -299,6 +299,8 @@ function print_login()
                                     <option value="0">Normal User</option>
                                     <option value="1">Administrator</option>
                                 </select>
+                            </div>
+                            <div class="form-group">
                                 <label for="regInputUsername"><?php echo $hesklang['username']; ?></label>
                                 <?php
 
