@@ -141,8 +141,11 @@ function do_login()
 
 	/* User entered all required info, now lets limit brute force attempts */
 	hesk_limitBfAttempts();
-    $result = hesk_dbQuery("SELECT * FROM `".hesk_dbEscape($hesk_settings['db_pfix'])."users` WHERE `user` = '".hesk_dbEscape($user)."' AND `isadmin` = '1' LIMIT 1");
     
+    $isadmin = hesk_REQUEST('isadmin');
+    // Use different SQL query based on user type
+    $result = hesk_dbQuery("SELECT * FROM `".hesk_dbEscape($hesk_settings['db_pfix'])."users` WHERE `user` = '".hesk_dbEscape($user)."' AND `isadmin` = '".hesk_dbEscape($isadmin)."' LIMIT 1");
+
 	if (hesk_dbNumRows($result) != 1)
 	{
         hesk_session_stop();
@@ -178,6 +181,7 @@ function do_login()
 
 	// Set a tag that will be used to expire sessions after username or password change
 	$_SESSION['session_verify'] = hesk_activeSessionCreateTag($user, $_SESSION['pass']);
+    $_SESSION['user_type'] = $_SESSION['isadmin'] ? 'admin' : 'client';
 
 	// We don't need the password hash anymore
 	unset($_SESSION['pass']);
@@ -271,6 +275,7 @@ function print_login()
     }
 
     $login_wrapper = true;
+
 	?>
     <div class="wrapper login">
         <main class="main">
@@ -289,6 +294,11 @@ function print_login()
                         </div>
                         <form action="index.php" class="form <?php echo isset($_SESSION['a_iserror']) && count($_SESSION['a_iserror']) ? 'invalid' : ''; ?>" id="form1" method="post" name="form1" novalidate>
                             <div class="form-group">
+                                <label for="user_type">Login As:</label>
+                                <select name="isadmin" id="user_type" class="form-control">
+                                    <option value="0">Normal User</option>
+                                    <option value="1">Administrator</option>
+                                </select>
                                 <label for="regInputUsername"><?php echo $hesklang['username']; ?></label>
                                 <?php
 

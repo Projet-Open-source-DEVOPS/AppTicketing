@@ -547,7 +547,7 @@ function hesk_isLoggedIn()
 	$referer = str_replace('&amp;','&',$referer);
 
 	// Admin login URL
-	$url = $hesk_settings['hesk_url'] . '/' . $hesk_settings['admin_dir'] . '/index.php?a=login&notice=1&goto='.urlencode($referer);
+	$url = $hesk_settings['hesk_url'] . '/' . $hesk_settings['customer_dir'] = 'client'. '/index.php?a=login&notice=1&goto='.urlencode($referer);
 
     if ( empty($_SESSION['id']) || empty($_SESSION['session_verify']) )
     {
