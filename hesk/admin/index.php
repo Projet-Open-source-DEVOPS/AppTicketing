@@ -284,6 +284,7 @@ function print_login()
                     <div class="bg-absolute"><img src="<?php echo HESK_PATH; ?>img/hero-bg.png" alt="Hesk" /></div>
                 </div>
                 <div class="reg__section">
+                    <a href="../" class="link">&#8592; Back to the homepage</a> 
                     <div class="reg__box">
                         <h2 class="reg__heading"><?php echo $hesklang['admin_login']; ?></h2>
                         <div style="margin-right: -24px; margin-left: -16px">
@@ -292,9 +293,9 @@ function print_login()
                             hesk_handle_messages();
                             ?>
                         </div>
-                        <form action="index.php" class="form <?php echo isset($_SESSION['a_iserror']) && count($_SESSION['a_iserror']) ? 'invalid' : ''; ?>" id="form1" method="post" name="form1" novalidate>
+                        <form action="index.php" class="form <?php echo isset($_SESSION['a_iserror']) && count($_SESSION['a_iserror']) ? 'invalid' : ''; ?>" id="form1" method="post" name="form1" novalidate>    
                             <div class="form-group">
-                                <label for="user_type">Login As:</label>
+                                <label for="user_type">Login As</label>
                                 <select name="isadmin" id="user_type" class="form-control">
                                     <option value="0">Normal User</option>
                                     <option value="1">Administrator</option>
